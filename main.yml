@@ -1,0 +1,59 @@
+---
+- name: Provisionner une VM dans OpenShift Virtualization (Namespace mchoura)
+  hosts: localhost
+  connection: local
+  
+  vars:
+    # Vos variables spécifiques
+    vm_namespace: "mchoura" 
+    vm_name: "ma-vm-vlan-test"
+    vm_network_name: "mchoura/vlan-2005" # Le nom de votre ressource NetworkAttachmentDefinition
+
+  tasks:
+    - name: Déployer la VirtualMachine via l'API KubeVirt
+      kubernetes.core.k8s:
+        state: present
+        verify_ssl: no # À passer à 'yes' en production si vous avez des certificats valides
+        definition:
+          apiVersion: kubevirt.io/v1
+          kind: VirtualMachine
+          metadata:
+            name: "{{ vm_name }}"
+            namespace: "{{ vm_namespace }}"
+          spec:
+            running: true
+            template:
+              metadata:
+                labels:
+                  app: test-aap-vlan
+              spec:
+                domain:
+                  resources:
+                    requests:
+                      memory: "1Gi"
+                  cpu:
+                    cores: 1
+                  devices:
+                    disks:
+                      - name: os-disk
+                        disk:
+                          bus: virtio
+                    interfaces:
+                      # Interface 1 : Réseau par défaut du Pod (souvent nécessaire pour l'accès API/Internet externe)
+                      - name: default
+                        masquerade: {}
+                      # Interface 2 : Votre réseau VLAN spécifique
+                      - name: vlan-interface
+                        bridge: {}
+                networks:
+                  # Réseau par défaut
+                  - name: default
+                    pod: {}
+                  # Connexion de l'interface au Multus VLAN-2005
+                  - name: vlan-interface
+                    multus:
+                      networkName: "{{ vm_network_name }}"
+                volumes:
+                  - name: os-disk
+                    containerDisk:
+                      image: quay.io/containerdisks/fedora:latest
