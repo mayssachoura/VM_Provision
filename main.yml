@@ -6,10 +6,10 @@
   vars:
     # Vos variables spécifiques
     vm_namespace: "mchoura" 
-    vm_name: "newvm test"
+    vm_name: "newvm-test"
     vm_network_name: "mchoura/vlan-2005" 
     vm_user: "missa" 
-    vm_password: "1234567!"
+    vm_password: "1234567"
 
   tasks:
     - name: Déployer la VirtualMachine via l'API KubeVirt
