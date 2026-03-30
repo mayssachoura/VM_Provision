@@ -40,6 +40,10 @@
                       - name: os-disk
                         disk:
                           bus: virtio
+                      # --- Ajout du disque cloud-init ---
+                      - name: cloudinitdisk
+                        disk:
+                          bus: virtio
                     interfaces:
                       # Interface 1 : Réseau par défaut du Pod (souvent nécessaire pour l'accès API/Internet externe)
                       - name: default
@@ -59,3 +63,12 @@
                   - name: os-disk
                     containerDisk:
                       image: quay.io/containerdisks/fedora:latest
+                  # --- Ajout du volume cloud-init avec le script userData ---
+                  - name: cloudinitdisk
+                    cloudInitNoCloud:
+                      userData: |
+                        #cloud-config
+                        user: {{ vm_user }}
+                        password: {{ vm_password }}
+                        chpasswd: { expire: False }
+                        ssh_pwauth: True
