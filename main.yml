@@ -44,9 +44,10 @@
                         disk:
                           bus: virtio
                     interfaces:
-                      # Interface 2 (eth1) : Réseau VLAN
+                      # Interface 1 (eth0/enp1s0) : Réseau VLAN
                       - name: vlan-interface
                         bridge: {}
+                        model: virtio  # <--- AJOUT DU MODÈLE ICI
                 networks:
                   - name: vlan-interface
                     multus:
@@ -57,18 +58,16 @@
                       image: quay.io/containerdisks/fedora:latest
                   - name: cloudinitdisk
                     cloudInitNoCloud:
-
                       userData: |
                         #cloud-config
                         user: {{ vm_user }}
                         password: {{ vm_password }}
                         chpasswd: { expire: False }
                         ssh_pwauth: True
-
                       networkData: |
                         version: 2
                         ethernets:
                           enp1s0:  
                             dhcp4: false
                             addresses:
-                              - 172.16.5.20/24
+                              - {{ vm_ip }}
