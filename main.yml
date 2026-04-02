@@ -44,15 +44,10 @@
                         disk:
                           bus: virtio
                     interfaces:
-                      # Interface 1 (eth0) : Réseau par défaut
-                      - name: default
-                        masquerade: {}
                       # Interface 2 (eth1) : Réseau VLAN
                       - name: vlan-interface
                         bridge: {}
                 networks:
-                  - name: default
-                    pod: {}
                   - name: vlan-interface
                     multus:
                       networkName: "{{ vm_network_name }}"
