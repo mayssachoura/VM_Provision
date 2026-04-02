@@ -9,13 +9,13 @@
     vm_network_name: "mchoura/vlan-2005" 
     vm_user: "missa" 
     vm_password: "missou"
-    vm_ip: "172.16.5.20/24" # <-- Nouvelle variable pour l'IP statique
+    vm_ip: "172.16.5.20/24" 
 
   tasks:
     - name: Déployer la VirtualMachine via l'API KubeVirt
       kubernetes.core.k8s:
         state: present
-        verify_ssl: no # À passer à 'yes' en production si vous avez des certificats valides
+        verify_ssl: no 
         definition:
           apiVersion: kubevirt.io/v1
           kind: VirtualMachine
@@ -62,14 +62,14 @@
                       image: quay.io/containerdisks/fedora:latest
                   - name: cloudinitdisk
                     cloudInitNoCloud:
-                      # --- 1. Identifiants de connexion ---
+
                       userData: |
                         #cloud-config
                         user: {{ vm_user }}
                         password: {{ vm_password }}
                         chpasswd: { expire: False }
                         ssh_pwauth: True
-                      # --- 2. Configuration IP Statique ---
+
                       networkData: |
                         version: 2
                         ethernets:
