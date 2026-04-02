@@ -73,7 +73,7 @@
                       networkData: |
                         version: 2
                         ethernets:
-                          eth1:
+                          enp1s0:  
                             dhcp4: false
                             addresses:
-                              - {{ vm_ip }}
+                              - 172.16.5.20/24
