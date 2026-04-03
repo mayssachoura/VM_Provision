@@ -38,7 +38,7 @@
                       - name: vlan-interface
                         bridge: {}
                         model: virtio
-                        macAddress: "{{ vm_mac }}"
+                        macAddress: "{{ macAddress  }}"
                     disks:
                       - name: containerdisk
                         disk:
