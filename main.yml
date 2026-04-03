@@ -8,7 +8,6 @@
     vm_password: "missou"         
     vm_ip: "172.16.5.20/24"       
     vm_gateway: "172.16.5.1"
-    vm_mac: "52:54:00:11:22:33"
 
   tasks:
     - name: Déployer la VirtualMachine via l'API KubeVirt
