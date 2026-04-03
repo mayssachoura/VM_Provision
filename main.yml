@@ -46,7 +46,6 @@
                         disk:
                           bus: virtio
                     interfaces:
-                      # Interface 1 (eth0/enp1s0) : Réseau VLAN
                       - name: vlan-interface
                         bridge: {}
                         model: virtio
