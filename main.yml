@@ -8,6 +8,7 @@
     vm_password: "missou"         
     vm_ip: "172.16.5.20/24"       
     vm_gateway: "172.16.5.1"
+    macAddress: '02:2c:5a:00:00:00'
 
   tasks:
     - name: Déployer la VirtualMachine via l'API KubeVirt
@@ -67,7 +68,7 @@
                         ethernets:
                           carte_vlan:
                             match:
-                              macaddress: {{ vm_mac }}
+                              macaddress: {{ macAddress }}
                             dhcp4: false
                             addresses:
                               - {{ vm_ip }}
