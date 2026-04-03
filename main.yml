@@ -1,17 +1,14 @@
----
-- name: Provisionner une VM dans OpenShift Virtualization (Namespace mchoura)
-  hosts: localhost
+- hosts: localhost
   connection: local
   vars:
-    # Vos variables spécifiques
     vm_namespace: "mchoura" 
     vm_name: "newvm-test"
     vm_network_name: "mchoura/vlan-2005" 
-    
-    vm_user: "rhel"              
+    vm_user: "rhel"               
     vm_password: "missou"         
-    vm_ip: "172.16.5.20/24"      
-    vm_gateway: "172.16.5.1" 
+    vm_ip: "172.16.5.20/24"       
+    vm_gateway: "172.16.5.1"
+    vm_mac: "52:54:00:11:22:33"
 
   tasks:
     - name: Déployer la VirtualMachine via l'API KubeVirt
@@ -26,38 +23,38 @@
             namespace: "{{ vm_namespace }}"
           spec:
             running: true
+            instancetype:
+              name: u1.medium
+            preference:
+              name: fedora
             template:
               metadata:
                 labels:
                   app: test-aap-vlan
               spec:
                 domain:
-                  resources:
-                    requests:
-                      memory: "1Gi"
-                  cpu:
-                    cores: 1
                   devices:
-                    disks:
-                      - name: os-disk
-                        disk:
-                          bus: virtio
-                      - name: cloudinitdisk
-                        disk:
-                          bus: virtio
                     interfaces:
                       - name: vlan-interface
                         bridge: {}
                         model: virtio
+                        macAddress: "{{ vm_mac }}"
+                    disks:
+                      - name: containerdisk
+                        disk:
+                          bus: virtio
+                      - name: cloudinit
+                        disk:
+                          bus: virtio
                 networks:
                   - name: vlan-interface
                     multus:
                       networkName: "{{ vm_network_name }}"
                 volumes:
-                  - name: os-disk
+                  - name: containerdisk
                     containerDisk:
                       image: quay.io/containerdisks/fedora:latest
-                  - name: cloudinitdisk
+                  - name: cloudinit
                     cloudInitNoCloud:
                       userData: |
                         #cloud-config
@@ -69,8 +66,12 @@
                       networkData: |
                         version: 2
                         ethernets:
-                          enp1s0:            
+                          carte_vlan:
+                            match:
+                              macaddress: {{ vm_mac }}
                             dhcp4: false
                             addresses:
                               - {{ vm_ip }}
-                            gateway4: {{ vm_gateway }}  
+                            routes:
+                              - to: 0.0.0.0/0
+                                via: {{ vm_gateway }}
