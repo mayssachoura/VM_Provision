@@ -7,9 +7,11 @@
     vm_namespace: "mchoura" 
     vm_name: "newvm-test"
     vm_network_name: "mchoura/vlan-2005" 
-    vm_user: "missa" 
-    vm_password: "missou"
-    vm_ip: "172.16.5.20/24" 
+    
+    vm_user: "rhel"              
+    vm_password: "missou"         
+    vm_ip: "172.16.5.20/24"      
+    vm_gateway: "172.16.5.1" 
 
   tasks:
     - name: Déployer la VirtualMachine via l'API KubeVirt
@@ -47,7 +49,7 @@
                       # Interface 1 (eth0/enp1s0) : Réseau VLAN
                       - name: vlan-interface
                         bridge: {}
-                        model: virtio  # <--- AJOUT DU MODÈLE ICI
+                        model: virtio
                 networks:
                   - name: vlan-interface
                     multus:
@@ -64,10 +66,13 @@
                         password: {{ vm_password }}
                         chpasswd: { expire: False }
                         ssh_pwauth: True
+                      
+                      # --- BLOC 2 : Configuration Réseau (Network data) ---
                       networkData: |
                         version: 2
                         ethernets:
-                          enp1s0:  
+                          enp1s0:            
                             dhcp4: false
                             addresses:
                               - {{ vm_ip }}
+                            gateway4: {{ vm_gateway }}  
