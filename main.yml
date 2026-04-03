@@ -67,7 +67,6 @@
                         chpasswd: { expire: False }
                         ssh_pwauth: True
                       
-                      # --- BLOC 2 : Configuration Réseau (Network data) ---
                       networkData: |
                         version: 2
                         ethernets:
